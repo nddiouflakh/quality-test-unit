@@ -1,0 +1,9 @@
+services:
+  postgres:
+    image: 'postgres:12'
+    environment:
+      - 'POSTGRES_DB=db-customer'
+      - 'POSTGRES_PASSWORD=passer'
+      - 'POSTGRES_USER=postgres'
+    ports:
+      - '5432'
