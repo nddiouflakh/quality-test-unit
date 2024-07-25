@@ -1,7 +1,7 @@
 pipline{
   agent none
   stages{
-    stage("build & SonarQube Scanner"){
+    stage("build & SonarQube_server"){
       agent any
       steps{
         withSonarQubeEnv("SonarQube Scanner"){
