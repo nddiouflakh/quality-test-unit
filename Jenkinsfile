@@ -16,7 +16,7 @@ pipeline {
                 maven 'Maven'
             }
             steps {
-                sh 'Maven test'
+                sh 'mvn test'
             }
         }
         stage("SonarQube analysis") {
