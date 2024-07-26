@@ -1,18 +1,34 @@
 pipeline {
     agent none
     stages {
-        stage("build & SonarQube_server") {
+        stage("build") {
             agent any
             tools {
                 maven 'Maven' // Name of the Maven installation configured in Jenkins
-                //jdk 'JDK 11'
+            }
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+        stage("test") {
+            agent any
+            tools {
+                maven 'Maven'
+            }
+            steps {
+                sh 'mvn test'
+            }
+        }
+        stage("SonarQube analysis") {
+            agent any
+            tools {
+                maven 'Maven'
             }
             steps {
                 withSonarQubeEnv('SonarQube_server') {
-                    sh 'mvn clean package sonar:sonar'
+                    sh 'mvn sonar:sonar'
                 }
             }
         }
     }
 }
-
