@@ -1,0 +1,44 @@
+name: OWASP ZAP Security Scan
+
+on:
+  push:
+    branches:
+      - main  # Exécuter le workflow uniquement pour les changements sur la branche principale
+
+jobs:
+  security-scan:
+    runs-on: macos-latest  # Choisir l'environnement sur lequel le workflow sera exécuté
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2  # Vérifie le code source du dépôt
+
+      - name: Set up OWASP ZAP
+        run: |
+          # Téléchargement et configuration d'OWASP ZAP sur le système
+          curl -L https://github.com/zaproxy/zaproxy/releases/download/v2.11.1/ZAP_2.11.1_Darwin.dmg -o ZAP.dmg
+          hdiutil mount ZAP.dmg
+          cp -r /Volumes/ZAP/ZAP.app /Applications/
+          hdiutil unmount /Volumes/ZAP/
+
+      - name: Start OWASP ZAP
+        run: |
+          # Lancer OWASP ZAP en mode headless
+          /Applications/ZAP.app/Contents/Resources/zap/bin/zap.sh -daemon -port 8080
+        background: true
+
+      - name: Run OWASP ZAP security scan
+        run: |
+          # Exécuter un scan OWASP ZAP rapide sur votre application locale
+          /Applications/ZAP.app/Contents/Resources/zap/bin/zap-cli quick-scan --url http://localhost:8080 --api-key 12345
+
+      - name: Generate OWASP ZAP report
+        run: |
+          # Générer un rapport HTML de sécurité
+          /Applications/ZAP.app/Contents/Resources/zap/bin/zap-cli report --output-file zap_report.html
+
+      - name: Upload report to GitHub
+        uses: actions/upload-artifact@v2
+        with:
+          name: zap-report
+          path: zap_report.html  # Télécharger le rapport généré dans l'interface GitHub
