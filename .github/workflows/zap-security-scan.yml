@@ -3,10 +3,10 @@ name: CI/CD Pipeline with OWASP ZAP Security Scan
 on:
   push:
     branches:
-      - main  # Trigger when pushing to the 'main' branch
+      - master  # Trigger when pushing to the 'master' branch
   pull_request:
     branches:
-      - main  # Trigger when creating a pull request for the 'main' branch
+      - master  # Trigger when creating a pull request for the 'master' branch
 
 jobs:
   security-scan:
