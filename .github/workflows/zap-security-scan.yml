@@ -17,17 +17,14 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # Set up OWASP ZAP Docker container (in headless mode)
-      - name: Set up OWASP ZAP for Dynamic Security Testing
-        uses: docker://owasp/zap2docker-stable:latest
-        with:
-          entrypoint: "/bin/bash"
-          args: "-c 'zap-cli quick-scan --self-contained -t http://localhost:8080'"
-
-      # Start OWASP ZAP in headless mode (no UI)
+      # Set up OWASP ZAP and run the security scan
       - name: Run OWASP ZAP Security Scan
-        run: |
-          docker run -t owasp/zap2docker-stable -t http://localhost:8080 -g gen.conf -r zap_report.html
+        uses: zaproxy/action-full-scan@v0.7.0
+        with:
+          target: 'http://localhost:8080'  # Target URL for the scan
+          docker_image: 'owasp/zap2docker-stable:latest'  # Optional: you can specify the image for internal use
+          rules_file: 'zap_rules.txt'  # Optional: if you want to provide custom scan rules
+          api_key: ${{ secrets.ZAP_API_KEY }}  # Optional: if you need an API key for OWASP ZAP
 
       # Upload the ZAP report to GitHub artifacts
       - name: Upload ZAP Report as Artifact
